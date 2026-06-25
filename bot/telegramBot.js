@@ -291,7 +291,14 @@ user.balance =
 
 await user.save();
 
+const withdrawalNumber =
+  "WD-" +
+  Date.now() +
+  "-" +
+  Math.floor(Math.random() * 10000);
+
 await Withdrawal.create({
+  withdrawalNumber,
   telegramId: user.telegramId,
   username: user.username,
   phone: user.phone,
