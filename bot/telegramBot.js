@@ -591,10 +591,10 @@ bot.hears("▣ Play Game", async (ctx) => {
     "🎰 Open Virtual Casino",
     Markup.inlineKeyboard([
       [
-       Markup.button.webApp(
-  "🚀 Play Now",
-  "https://YOUR-FRONTEND-NGROK.ngrok-free.dev/game"
-)
+        Markup.button.webApp(
+          "🚀 Play Now",
+          "https://arkey-frontend.vercel.app/game"
+        )
       ]
     ])
   );
