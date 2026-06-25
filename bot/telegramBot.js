@@ -125,7 +125,7 @@ To continue please register.`,
 🌐 https://arkey.bet
 
 ◈ Balance:
-${existingUser.balance} ETB`,
+${existingUser.balance} Birr`,
 Markup.keyboard([
   ["◈ Balance", "◉ Deposit"],
   ["⇧ Withdraw", "▣ Play Game"],
@@ -319,10 +319,10 @@ return ctx.reply(`
 ✅ Withdrawal Submitted
 
 💰 Amount:
-${amount} ETB
+${amount} Birr
 
 💳 Remaining Balance:
-${user.balance} ETB
+${user.balance} Birr
 
 ⏳ Waiting For Admin Approval
 `);
@@ -396,7 +396,7 @@ TRX123456
 ✅ Deposit Submitted
 
 💳 Method: ${deposit.method}
-💰 Amount: ${deposit.amount} ETB
+💰 Amount: ${deposit.amount} Birr
 🧾 Transaction ID: ${transactionId}
 
 ⏳ Waiting for admin approval.
@@ -438,7 +438,7 @@ async (ctx) => {
 
     ctx.reply(
       `💰 Your Balance:
-${user.balance} ETB`
+${user.balance} Birr`
     );
 
   } catch (error) {

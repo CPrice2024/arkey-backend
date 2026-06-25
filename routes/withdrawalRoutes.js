@@ -67,7 +67,7 @@ console.log(withdrawal);
 ✅ Withdrawal Approved
 
 💰 Amount:
-${withdrawal.amount} ETB
+${withdrawal.amount} Birr
 `
     );
 
@@ -145,10 +145,10 @@ withdrawal.processedAt =
 ❌ Withdrawal Rejected
 
 💰 Refunded:
-${withdrawal.amount} ETB
+${withdrawal.amount} Birr
 
 💳 Current Balance:
-${user.balance} ETB
+${user.balance} Birr
 `
     );
 

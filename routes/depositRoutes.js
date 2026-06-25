@@ -157,7 +157,7 @@ router.post("/", async (req, res) => {
 👤 User: ${username}
 📱 Phone: ${phone || 'N/A'}
 💳 Method: ${method}
-💰 Amount: ${amount} ETB
+💰 Amount: ${amount} Birr
 🏦 Deposit Number: ${depositNumber}
 🆔 Transaction ID: ${transactionId || 'N/A'}
 📝 Note: ${note || 'N/A'}
@@ -271,10 +271,10 @@ if (user) {
 ✅ *Deposit Approved*
 
 💳 Method: ${deposit.method}
-💰 Amount: *${amount} ETB*
+💰 Amount: *${amount} Birr*
 🧾 Transaction ID: ${deposit.transactionId || 'N/A'}
 
-💵 New Balance: *${user.balance.toLocaleString()} ETB*
+💵 New Balance: *${user.balance.toLocaleString()} Birr*
 
 🎉 Thank you for using Arkey Bet.
           `,
@@ -349,7 +349,7 @@ deposit.processedAt =
 ❌ *Deposit Rejected*
 
 💳 Method: ${deposit.method}
-💰 Amount: ${deposit.amount} ETB
+💰 Amount: ${deposit.amount} Birr
 
 📝 Reason: ${req.body.reason || 'Please contact support for more information'}
 
