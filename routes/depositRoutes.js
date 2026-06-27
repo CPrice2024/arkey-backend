@@ -311,65 +311,86 @@ router.put(
   roles("admin", "agent"),
   async (req, res) => {
 
-  new Date();
-  try {
-    const deposit = await Deposit.findById(req.params.id);
-    deposit.rejectedBy =
-  req.user._id;
-
-deposit.rejectedByName =
-  req.user.username;
-
-deposit.rejectionReason =
-  req.body.reason || "";
-
-deposit.processedByRole =
-  req.user.role;
-
-deposit.processedAt =
-  new Date();
-
-    if (!deposit) {
-      return res.status(404).json({ message: "Deposit not found" });
-    }
-
-    if (deposit.status === "approved") {
-      return res.status(400).json({ message: "Cannot reject approved deposit" });
-    }
-
-    deposit.status = "rejected";
-    deposit.rejectedAt = new Date();
-    await deposit.save();
-
-    // Send rejection notification to user
     try {
-      await bot.telegram.sendMessage(
-        deposit.telegramId,
-        `
-❌ *Deposit Rejected*
 
-💳 Method: ${deposit.method}
-💰 Amount: ${deposit.amount} Birr
+      const deposit = await Deposit.findById(req.params.id);
 
-📝 Reason: ${req.body.reason || 'Please contact support for more information'}
+      if (!deposit) {
+        return res.status(404).json({
+          message: "Deposit not found"
+        });
+      }
 
-ℹ️ Please submit a new deposit request with correct details.
-        `,
-        { parse_mode: 'Markdown' }
+      if (deposit.status === "approved") {
+        return res.status(400).json({
+          message: "Cannot reject approved deposit"
+        });
+      }
+
+      deposit.status = "rejected";
+      deposit.rejectedAt = new Date();
+
+      deposit.rejectedBy = req.user._id;
+      deposit.rejectedByName =
+        req.user.username ||
+        req.user.firstName ||
+        "Admin";
+
+      deposit.rejectionReason =
+        req.body.reason || "";
+
+      deposit.processedByRole =
+        req.user.role;
+
+      deposit.processedAt =
+        new Date();
+
+      await deposit.save();
+
+      try {
+
+        await bot.telegram.sendMessage(
+          deposit.telegramId,
+          `❌ Deposit Rejected
+
+Amount: ${deposit.amount} Birr
+
+Reason:
+${req.body.reason || "Please contact support."}`
+        );
+
+      } catch (err) {
+
+        console.log(
+          "Telegram Error:",
+          err.message
+        );
+
+      }
+
+      res.json({
+        success: true,
+        message: "Deposit rejected successfully",
+        deposit
+      });
+
+    } catch (error) {
+
+      console.error(
+        "REJECT ERROR:"
       );
-    } catch (telegramError) {
-      console.log("Telegram notification failed:", telegramError.message);
+
+      console.error(error);
+
+      res.status(500).json({
+        message: error.message,
+        stack: error.stack
+      });
+
     }
 
-    res.json({
-      message: "Deposit rejected successfully",
-      deposit
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server Error" });
   }
-});
+);
 
 // =======================================
 // BULK APPROVE DEPOSITS

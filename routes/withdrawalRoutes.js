@@ -94,76 +94,113 @@ router.put(
   roles("admin", "agent"),
   async (req, res) => {
 
-  try {
+    try {
 
-    const withdrawal =
-      await Withdrawal.findById(req.params.id);
+      const withdrawal =
+        await Withdrawal.findById(req.params.id);
+
+      if (!withdrawal) {
+        return res.status(404).json({
+          message: "Withdrawal not found"
+        });
+      }
+
+      if (withdrawal.status === "approved") {
+        return res.status(400).json({
+          message: "Cannot reject an approved withdrawal"
+        });
+      }
+
+      if (withdrawal.status === "rejected") {
+        return res.status(400).json({
+          message: "Withdrawal already rejected"
+        });
+      }
+
+      const user = await User.findOne({
+        telegramId: withdrawal.telegramId
+      });
+
+      if (user) {
+
+        user.balance =
+          Number(user.balance || 0) +
+          Number(withdrawal.amount || 0);
+
+        await user.save();
+
+      }
+
+      withdrawal.status = "rejected";
+      withdrawal.rejectedAt = new Date();
 
       withdrawal.rejectedBy =
-  req.user._id;
+        req.user._id;
 
-withdrawal.rejectedByName =
-  req.user.username;
+      withdrawal.rejectedByName =
+        req.user.username ||
+        req.user.firstName ||
+        "Admin";
 
-withdrawal.processedByRole =
-  req.user.role;
+      withdrawal.processedByRole =
+        req.user.role;
 
-withdrawal.rejectionReason =
-  req.body.reason || "";
+      withdrawal.rejectionReason =
+        req.body.reason || "";
 
-withdrawal.processedAt =
-  new Date();
+      withdrawal.processedAt =
+        new Date();
 
-    if (!withdrawal) {
-      return res.status(404).json({
-        message: "Withdrawal not found"
-      });
-    }
+      await withdrawal.save();
 
-    const user =
-      await User.findOne({
-        telegramId:
-          withdrawal.telegramId
-      });
+      try {
 
-    if (user) {
-
-      user.balance =
-        Number(user.balance) +
-        Number(withdrawal.amount);
-
-      await user.save();
-    }
-
-    withdrawal.status = "rejected";
-
-    await withdrawal.save();
-
-    await global.bot.telegram.sendMessage(
-      withdrawal.telegramId,
-      `
+        await global.bot.telegram.sendMessage(
+          withdrawal.telegramId,
+          `
 ❌ Withdrawal Rejected
 
 💰 Refunded:
 ${withdrawal.amount} Birr
 
 💳 Current Balance:
-${user.balance} Birr
+${user ? user.balance : 0} Birr
+
+Reason:
+${req.body.reason || "Please contact support."}
 `
-    );
+        );
 
-    res.json({
-      success: true
-    });
+      } catch (telegramError) {
 
-  } catch (error) {
+        console.log(
+          "Telegram Error:",
+          telegramError.message
+        );
 
-    console.log(error);
+      }
 
-    res.status(500).json({
-      message: error.message
-    });
+      res.json({
+        success: true,
+        message: "Withdrawal rejected successfully"
+      });
+
+    } catch (error) {
+
+      console.error(
+        "WITHDRAWAL REJECT ERROR:"
+      );
+
+      console.error(error);
+
+      res.status(500).json({
+        message: error.message,
+        stack: error.stack
+      });
+
+    }
+
   }
-});
+);
 
 module.exports = router;
