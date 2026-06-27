@@ -8,9 +8,6 @@ const Deposit = require("../models/Deposit");
 const User = require("../models/User");
 const bot = require("../bot/telegramBot");
 
-// =======================================
-// GET ALL DEPOSITS (with filters & pagination)
-// =======================================
 
 router.get(
   "/",
@@ -87,9 +84,6 @@ router.get(
   }
 });
 
-// =======================================
-// GET SINGLE DEPOSIT
-// =======================================
 
 router.get(
   "/:id",
@@ -110,9 +104,6 @@ router.get(
   }
 });
 
-// =======================================
-// CREATE NEW DEPOSIT
-// =======================================
 
 router.post("/", async (req, res) => {
   try {
@@ -179,9 +170,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// =======================================
-// APPROVE DEPOSIT
-// =======================================
 
 router.put(
   "/:id/approve",
@@ -301,9 +289,6 @@ if (user) {
   }
 });
 
-// =======================================
-// REJECT DEPOSIT
-// =======================================
 
 router.put(
   "/:id/reject",
@@ -337,7 +322,7 @@ router.put(
         "Admin";
 
       deposit.rejectionReason =
-        req.body.reason || "";
+        req.body?.reason || "";
 
       deposit.processedByRole =
         req.user.role;
@@ -356,7 +341,7 @@ router.put(
 Amount: ${deposit.amount} Birr
 
 Reason:
-${req.body.reason || "Please contact support."}`
+${deposit.rejectionReason || "Please contact support."}`
         );
 
       } catch (err) {
@@ -391,10 +376,6 @@ ${req.body.reason || "Please contact support."}`
 
   }
 );
-
-// =======================================
-// BULK APPROVE DEPOSITS
-// =======================================
 
 router.post(
   "/bulk-approve",
@@ -497,9 +478,6 @@ router.post(
   }
 });
 
-// =======================================
-// GET DEPOSIT STATISTICS
-// =======================================
 
 router.get(
   "/stats/summary",
@@ -559,9 +537,6 @@ router.get(
   }
 });
 
-// =======================================
-// DELETE DEPOSIT (Admin only)
-// =======================================
 
 router.delete(
   "/:id",
@@ -594,9 +569,5 @@ router.delete(
     res.status(500).json({ message: "Server Error" });
   }
 });
-
-// =======================================
-// EXPORT
-// =======================================
 
 module.exports = router;

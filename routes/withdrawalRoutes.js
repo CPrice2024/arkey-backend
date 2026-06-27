@@ -6,10 +6,6 @@ const router = express.Router();
 const Withdrawal = require("../models/Withdrawal");
 const User = require("../models/User");
 
-// =====================================
-// GET ALL WITHDRAWALS
-// =====================================
-
 router.get(
   "/",
   auth,
@@ -21,10 +17,6 @@ router.get(
 
   res.json({ withdrawals });
 });
-
-// =====================================
-// APPROVE WITHDRAWAL
-// =====================================
 
 router.put(
   "/:id/approve",
@@ -84,9 +76,6 @@ ${withdrawal.amount} Birr
     });
   }
 });
-// =====================================
-// REJECT WITHDRAWAL
-// =====================================
 
 router.put(
   "/:id/reject",
@@ -146,7 +135,7 @@ router.put(
         req.user.role;
 
       withdrawal.rejectionReason =
-        req.body.reason || "";
+        req.body?.reason || "";
 
       withdrawal.processedAt =
         new Date();
@@ -167,7 +156,7 @@ ${withdrawal.amount} Birr
 ${user ? user.balance : 0} Birr
 
 Reason:
-${req.body.reason || "Please contact support."}
+${withdrawal.rejectionReason || "Please contact support."}
 `
         );
 
