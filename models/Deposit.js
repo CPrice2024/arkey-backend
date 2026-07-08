@@ -17,7 +17,7 @@ const depositSchema = new mongoose.Schema({
   method: {
     type: String,
     required: true,
-    enum: ['telebirr', 'cbe', 'helloCash', 'bank']
+    enum: ['telebirr', 'cbe', 'bank']
   },
   amount: {
     type: Number,
@@ -27,7 +27,6 @@ const depositSchema = new mongoose.Schema({
   depositNumber: {
     type: String,
     required: true,
-    unique: true
   },
   note: {
     type: String,

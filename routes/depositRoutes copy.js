@@ -105,83 +105,36 @@ router.get(
 });
 
 
-router.post("/", auth, async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const {
-  method,
-  amount,
-  transactionId,
-  note
-} = req.body;
-
-const user = await User.findById(req.user._id);
-
-if (!user) {
-  return res.status(404).json({
-    message: "Player not found"
-  });
-}
+      telegramId,
+      username,
+      phone,
+      method,
+      amount,
+      depositNumber,
+      note,
+      transactionId
+    } = req.body;
 
     // Validate required fields
-    if (!method || !amount) {
+    if (!telegramId || !username || !method || !amount || !depositNumber) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const telebirrNumbers = [
-  "0911223344",
-  "0922334455",
-  "0933445566",
-  "0944556677",
-  "0955667788"
-];
-
-const cbeNumbers = [
-  "0966778899",
-  "0977889900",
-  "0988990011",
-  "0999001122",
-  "0910112233"
-];
-
-const list =
-  method === "telebirr"
-    ? telebirrNumbers
-    : cbeNumbers;
-
-const depositNumber =
-  list[
-    Math.floor(Math.random() * list.length)
-  ];
-
     const deposit = new Deposit({
-
-  telegramId: user.telegramId,
-
-  username:
-    user.username ||
-    user.firstName,
-
-  phone:
-    user.phone,
-
-  player:
-    user._id,
-
-  method,
-
-  amount: Number(amount),
-
-  depositNumber,
-
-  note,
-
-  transactionId,
-
-  status: "pending",
-
-  createdAt: new Date()
-
-});
+      telegramId,
+      username,
+      phone,
+      method,
+      amount: parseFloat(amount),
+      depositNumber,
+      note,
+      transactionId,
+      status: "pending",
+      createdAt: new Date()
+    });
 
     await deposit.save();
 
@@ -192,8 +145,8 @@ const depositNumber =
         `
 🆕 New Deposit Request
 
-👤 User: ${user.username || user.firstName}
-📱 Phone: ${user.phone || "N/A"}
+👤 User: ${username}
+📱 Phone: ${phone || 'N/A'}
 💳 Method: ${method}
 💰 Amount: ${amount} Birr
 🏦 Deposit Number: ${depositNumber}

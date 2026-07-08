@@ -12,17 +12,13 @@ const Deposit =
 const Withdrawal =
   require("../models/Withdrawal");  
 
-// =======================================
-// BOT
-// =======================================
+
 
 const bot = new Telegraf(
   process.env.BOT_TOKEN
 );
 
-// =======================================
-// SESSION
-// =======================================
+
 
 bot.use(
   session({
@@ -45,9 +41,6 @@ bot.use(
   })
 );
 
-// =======================================
-// ETHIOPIAN DEPOSIT NUMBERS
-// =======================================
 
 const depositNumbers = [
   "0911223344",
@@ -55,16 +48,9 @@ const depositNumbers = [
   "0933445566",
   "0944556677",
   "0955667788",
-  "0966778899",
-  "0977889900",
-  "0988990011",
-  "0999001122",
-  "0910112233"
 ];
 
-// =======================================
-// HELPERS
-// =======================================
+
 
 function getRandomNumbers(count = 5) {
 
@@ -88,9 +74,6 @@ function getRandomNumbers(count = 5) {
   return shuffled.slice(0, count);
 }
 
-// =======================================
-// START
-// =======================================
 
 bot.start(async (ctx) => {
 
@@ -135,9 +118,6 @@ Markup.keyboard([
   );
 });
 
-// =======================================
-// REGISTER
-// =======================================
 
 bot.hears("✅ Register",
 async (ctx) => {
@@ -157,12 +137,6 @@ async (ctx) => {
   );
 });
 
-// =======================================
-// CONTACT
-// =======================================
-// =======================================
-// RECEIVE PHONE NUMBER
-// =======================================
 
 bot.on("contact", async (ctx) => {
   try {
@@ -332,9 +306,7 @@ ${user.balance} Birr
       return ctx.reply("❌ Please register first.");
     }
 
-    // ===================================
-    // WAITING AMOUNT
-    // ===================================
+
 
     if (ctx.session.waitingAmount) {
 
@@ -354,9 +326,7 @@ TRX123456
 `);
     }
 
-    // ===================================
-    // WAITING TRANSACTION ID
-    // ===================================
+
 
     if (ctx.session.waitingTransactionId) {
 
@@ -413,9 +383,7 @@ TRX123456
   }
 });
 
-// =======================================
-// BALANCE
-// =======================================
+
 
 bot.hears("◈ Balance",
 async (ctx) => {
@@ -451,13 +419,7 @@ ${user.balance} Birr`
   }
 });
 
-// =======================================
-// DEPOSIT
-// =======================================
 
-// =======================================
-// DEPOSIT MENU
-// =======================================
 
 bot.hears("◉ Deposit", async (ctx) => {
 
@@ -479,9 +441,7 @@ bot.hears("◉ Deposit", async (ctx) => {
   );
 });
 
-// =======================================
-// TELEBIRR
-// =======================================
+
 
 bot.action("deposit_telebirr", async (ctx) => {
 
@@ -516,9 +476,7 @@ Example:
   await ctx.reply(text);
 });
 
-// =======================================
-// CBE
-// =======================================
+
 
 bot.action("deposit_cbe", async (ctx) => {
 
@@ -581,10 +539,6 @@ bot.action("withdraw_cbe", async (ctx) => {
   );
 });
 
-// ======================================
-// PLAY GAME
-// ======================================
-
 bot.hears("▣ Play Game", async (ctx) => {
 
   await ctx.reply(
@@ -601,11 +555,6 @@ bot.hears("▣ Play Game", async (ctx) => {
 
 });
 
-
-
-// =======================================
-// WITHDRAW
-// =======================================
 
 bot.hears("⇧ Withdraw", async (ctx) => {
 
@@ -628,9 +577,6 @@ bot.hears("⇧ Withdraw", async (ctx) => {
 
 });
 
-// =======================================
-// LIVE MATCHES
-// =======================================
 
 bot.hears("◌ Live Matches",
 (ctx) => {
@@ -642,9 +588,6 @@ bot.hears("◌ Live Matches",
 `);
 });
 
-// =======================================
-// MY BETS
-// =======================================
 
 bot.hears("⌘ My Bets",
 (ctx) => {
@@ -655,10 +598,6 @@ bot.hears("⌘ My Bets",
 🌐 https://arkey.bet
 `);
 });
-
-// =======================================
-// SUPPORT
-// =======================================
 
 bot.hears("◍ Support",
 (ctx) => {
@@ -673,10 +612,6 @@ https://arkey.bet
 https://t.me/arkeybet
 `);
 });
-
-// =======================================
-// HELP
-// =======================================
 
 bot.command("help",
 (ctx) => {
@@ -699,28 +634,20 @@ Buttons:
 `);
 });
 
-// =======================================
-// LAUNCH
-// =======================================
+if (process.env.START_BOT === "true") {
 
-bot.launch();
+  bot.launch();
 
-console.log(
-  "🤖 Arkey Bet Telegram Bot Running"
-);
+  console.log("🤖 Arkey Bet Telegram Bot Running");
 
-// =======================================
-// STOP
-// =======================================
+  process.once("SIGINT", () => bot.stop("SIGINT"));
 
-process.once(
-  "SIGINT",
-  () => bot.stop("SIGINT")
-);
+  process.once("SIGTERM", () => bot.stop("SIGTERM"));
 
-process.once(
-  "SIGTERM",
-  () => bot.stop("SIGTERM")
-);
+} else {
+
+  console.log("⚠️ Telegram Bot Disabled (Development Mode)");
+
+}
 
 module.exports = bot;

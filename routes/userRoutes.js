@@ -33,10 +33,7 @@ const csv = require("csv-parser");
 const upload =
   require("../middleware/upload");
 
-  
-// ======================================
-// GET ALL USERS
-// ======================================
+
 
 router.get(
   "/",
@@ -90,12 +87,6 @@ router.post(
   }
 );
 
-
-
-// ======================================
-// CREATE USER
-// ======================================
-
 router.post(
   "/",
   auth,
@@ -116,13 +107,6 @@ let {
   balance,
   status
 } = req.body;
-console.log("EMAIL =", email);
-console.log("PASSWORD =", password);
-console.log("ROLE =", role);
-
-    // =========================
-    // VALIDATION
-    // =========================
 
     if (
       !telegramId?.trim() ||
@@ -136,19 +120,12 @@ console.log("ROLE =", role);
       });
     }
 
-    // =========================
-    // CLEAN VALUES
-    // =========================
-
     telegramId =
       telegramId.trim();
 
     username =
       username.trim();
 
-    // =========================
-    // CHECK EXISTING USER
-    // =========================
 
     const existingUser =
       await User.findOne({
@@ -169,10 +146,6 @@ console.log("ROLE =", role);
           "User already exists"
       });
     }
-
-    // =========================
-    // CREATE USER
-    // =========================
 
   let hashedPassword = "";
 
@@ -239,10 +212,6 @@ const user =
     userData
   );
 
-    // =========================
-    // SUCCESS
-    // =========================
-
     res.status(201).json({
 
       success: true,
@@ -265,10 +234,6 @@ const user =
     });
   }
 });
-
-// ======================================
-// GET USER BY TELEGRAM ID
-// ======================================
 
 router.get(
   "/telegram/:telegramId",
@@ -302,12 +267,6 @@ router.get(
     }
   }
 );
-
-
-
-// ======================================
-// BULK CSV IMPORT USERS
-// ======================================
 
 router.post(
   "/bulk-upload",
@@ -372,7 +331,6 @@ users.push({
 
           for (const user of users) {
 
-            // REQUIRED CHECK
 
             if (
               !user.telegramId ||
@@ -380,8 +338,6 @@ users.push({
             ) {
               continue;
             }
-
-            // CHECK DUPLICATE
 
             const existingUser =
               await User.findOne({
@@ -393,14 +349,11 @@ users.push({
               continue;
             }
 
-            // CREATE USER
-
             await User.create(user);
 
             insertedCount++;
           }
 
-          // DELETE TEMP FILE
 
           if (fs.existsSync(req.file.path)) {
   fs.unlinkSync(req.file.path);
@@ -445,11 +398,6 @@ users.push({
     }
   }
 );
-
-// ======================================
-// UPDATE USER
-// ======================================
-
 router.put(
   "/:id",
   auth,
@@ -486,10 +434,6 @@ router.put(
   }
 });
 
-// ======================================
-// DELETE USER
-// ======================================
-
 router.delete(
   "/:id",
   auth,
@@ -523,10 +467,6 @@ router.delete(
     });
   }
 });
-
-// ======================================
-// UPDATE STATUS
-// ======================================
 
 router.patch(
   "/:id/status",
@@ -571,10 +511,6 @@ router.patch(
 
   }
 );
-// ======================================
-// BULK UPDATE BALANCE
-// ======================================
-
 router.post(
   "/bulk-update-balance",
   auth,
@@ -611,10 +547,6 @@ router.post(
     }
   }
 );
-
-// ======================================
-// CREATE AGENT
-// ======================================
 
 
 router.post(
@@ -686,9 +618,6 @@ router.post(
   }
 );
 
-// ======================================
-// CREATE ADMIN
-// ======================================
 
 
 
@@ -736,9 +665,6 @@ router.post("/admin", async (req, res) => {
 
 });
 
-// ======================================
-// USER STATS
-// ======================================
 
 router.get(
   "/stats",
@@ -830,9 +756,6 @@ router.get(
 );
 
 
-// ======================================
-// CURRENT USER
-// ======================================
 
 router.get(
   "/me",

@@ -7,7 +7,6 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-// LOGIN
 router.post(
   "/login",
   async (req, res) => {
@@ -70,7 +69,7 @@ router.post(
   }
 );
 
-// TEMP PLAYER TOKEN ROUTE
+
 router.post(
   "/player-test-token",
   async (req, res) => {
@@ -110,6 +109,7 @@ router.post(
 router.post(
   "/telegram-login",
   async (req, res) => {
+    console.log("LOGIN SECRET:", process.env.JWT_SECRET);
 
     try {
 

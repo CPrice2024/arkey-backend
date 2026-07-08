@@ -3,6 +3,7 @@ require("jsonwebtoken");
 
 module.exports =
 (req, res, next) => {
+  console.log("VERIFY SECRET:", process.env.JWT_SECRET);
 
   try {
 

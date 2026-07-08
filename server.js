@@ -32,10 +32,6 @@ const gameRoutes =
 
 const app = express();
 
-// ===============================
-// MIDDLEWARE
-// ===============================
-
 const allowedOrigins = [
   "http://localhost:3000",
   "https://arkey-frontend.vercel.app",
@@ -60,12 +56,6 @@ app.use(cors({
 
 app.use(express.json());
 
-app.get("/hello", (req, res) => {
-  res.json({
-    success: true,
-    message: "HELLO WORLD"
-  });
-});
 
 app.get("/test", (req, res) => {
   res.json({
@@ -100,10 +90,6 @@ app.use(
   gameRoutes
 );
 
-// ===============================
-// MONGODB
-// ===============================
-
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
@@ -132,9 +118,6 @@ app.listen(PORT, () => {
 
   });
 
-// ===============================
-// MULTER STORAGE
-// ===============================
 
 const storage =
   multer.diskStorage({
@@ -169,10 +152,6 @@ const storage =
 
 const upload =
   multer({ storage });
-
-// ===============================
-// GET USERS
-// ===============================
 
 
 app.get(
@@ -214,10 +193,6 @@ app.get(
         .send("Invalid token");
     }
 });
-
-// ===============================
-// BULK CSV IMPORT USERS
-// ===============================
 
 
 app.post(
