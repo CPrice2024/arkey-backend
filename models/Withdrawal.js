@@ -38,7 +38,7 @@ const withdrawalSchema = new mongoose.Schema({
   type: String,
   unique: true,
   sparse: true,
-  default: null
+  required: true
 },
   accountNumber: {
     type: String,

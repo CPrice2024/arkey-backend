@@ -634,20 +634,20 @@ Buttons:
 `);
 });
 
-bot.launch();
+if (process.env.START_BOT === "true") {
 
-console.log(
-  "🤖 Arkey Bet Telegram Bot Running"
-);
+  bot.launch();
 
-process.once(
-  "SIGINT",
-  () => bot.stop("SIGINT")
-);
+  console.log("🤖 Arkey Bet Telegram Bot Running");
 
-process.once(
-  "SIGTERM",
-  () => bot.stop("SIGTERM")
-);
+  process.once("SIGINT", () => bot.stop("SIGINT"));
+
+  process.once("SIGTERM", () => bot.stop("SIGTERM"));
+
+} else {
+
+  console.log("⚠️ Telegram Bot Disabled (Development Mode)");
+
+}
 
 module.exports = bot;
