@@ -30,15 +30,15 @@ module.exports =
 
     next();
 
-  } catch {
+  } catch (err) {
 
-    return res
-    .status(401)
-    .json({
-      message:
-      "Unauthorized"
-    });
+  console.log("JWT ERROR:");
+  console.log(err);
 
-  }
+  return res.status(401).json({
+    message: err.message
+  });
+
+}
 
 };

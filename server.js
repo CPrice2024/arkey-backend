@@ -5,6 +5,11 @@ const userRoutes =
   require("./routes/userRoutes");
   console.log("USER ROUTES:", typeof userRoutes);
 
+  const gameAuthRoutes =
+require("./routes/gameAuthRoutes");
+
+const inoutRoutes = require("./routes/inoutRoutes");
+
 const authRoutes =
   require("./routes/authRoutes");
 
@@ -85,9 +90,16 @@ app.use(
 );
 
 
+app.use("/api/inout", inoutRoutes);
+
 app.use(
   "/api/game", 
   gameRoutes
+);
+
+app.use(
+"/api/game",
+gameAuthRoutes
 );
 
 mongoose
