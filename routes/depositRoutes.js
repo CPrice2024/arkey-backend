@@ -9,6 +9,7 @@ const User = require("../models/User");
 const bot = require("../bot/telegramBot");
 
 
+
 router.get(
   "/",
   auth,
@@ -19,6 +20,7 @@ router.get(
       page = 1, 
       limit = 20, 
       status = 'all',
+      processedBy = "all",
       startDate,
       endDate,
       search 
@@ -30,21 +32,76 @@ router.get(
     if (status !== 'all') {
       query.status = status;
     }
+    query.$and = [];
+
+if (processedBy !== "all") {
+
+  const processorRegex = new RegExp(
+    `^${processedBy}$`,
+    "i"
+  );
+
+  query.$and.push({
+    $or: [
+      { approvedByName: processorRegex },
+      { rejectedByName: processorRegex }
+    ]
+  });
+
+}
+if (search) {
+
+  query.$and.push({
+
+    $or: [
+
+      {
+        transactionId: {
+          $regex: search,
+          $options: "i"
+        }
+      },
+
+      {
+        username: {
+          $regex: search,
+          $options: "i"
+        }
+      },
+
+      {
+        depositNumber: {
+          $regex: search,
+          $options: "i"
+        }
+      }
+
+    ]
+
+  });
+
+}
+
+
+if (query.$and && query.$and.length === 0) {
+  delete query.$and;
+}
+
     
     if (startDate && endDate) {
       query.createdAt = {
-        $gte: new Date(startDate),
-        $lte: new Date(endDate)
-      };
+  $gte: new Date(startDate),
+  $lte: new Date(
+    new Date(endDate).setHours(
+      23,
+      59,
+      59,
+      999
+    )
+  )
+};
     }
     
-    if (search) {
-      query.$or = [
-        { transactionId: { $regex: search, $options: 'i' } },
-        { username: { $regex: search, $options: 'i' } },
-        { depositNumber: { $regex: search, $options: 'i' } }
-      ];
-    }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
     
@@ -54,13 +111,36 @@ router.get(
       .limit(parseInt(limit));
     
     const total = await Deposit.countDocuments(query);
-    const pending = await Deposit.countDocuments({ status: 'pending' });
-    const approved = await Deposit.countDocuments({ status: 'approved' });
-    const rejected = await Deposit.countDocuments({ status: 'rejected' });
-    const totalAmount = await Deposit.aggregate([
-      { $match: { status: 'approved' } },
-      { $group: { _id: null, total: { $sum: "$amount" } } }
-    ]);
+    const pending = await Deposit.countDocuments({
+  ...query,
+  status: "pending"
+});
+
+const approved = await Deposit.countDocuments({
+  ...query,
+  status: "approved"
+});
+
+const rejected = await Deposit.countDocuments({
+  ...query,
+  status: "rejected"
+});
+const totalAmount = await Deposit.aggregate([
+  {
+    $match: {
+      ...query,
+      status: "approved"
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      total: {
+        $sum: "$amount"
+      }
+    }
+  }
+]);
 
     res.json({
       deposits,
@@ -83,26 +163,43 @@ router.get(
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 });
-
-
 router.get(
-  "/:id",
+  "/processors",
   auth,
   roles("admin", "agent"),
   async (req, res) => {
-  try {
-    const deposit = await Deposit.findById(req.params.id);
-    
-    if (!deposit) {
-      return res.status(404).json({ message: "Deposit not found" });
+    try {
+
+      const admins = await User.find(
+        { role: "admin" },
+        "username role"
+      ).sort({
+        username: 1
+      });
+
+      const agents = await User.find(
+        { role: "agent" },
+        "username role"
+      ).sort({
+        username: 1
+      });
+
+      return res.json({
+        admins,
+        agents
+      });
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        message: "Server Error"
+      });
+
     }
-    
-    res.json(deposit);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server Error" });
   }
-});
+);
 
 
 router.post("/", auth, async (req, res) => {
@@ -429,6 +526,8 @@ router.post(
   auth,
   roles("admin", "agent"),
   async (req, res) => {
+    const session = await mongoose.startSession();
+await session.startTransaction();
 
   try {
     const { depositIds } = req.body;
@@ -531,58 +630,248 @@ router.get(
   auth,
   roles("admin", "agent"),
   async (req, res) => {
-  try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const weekAgo = new Date(today);
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    
-    const monthAgo = new Date(today);
-    monthAgo.setMonth(monthAgo.getMonth() - 1);
+    try {
 
-    const [todayStats, weekStats, monthStats, allStats] = await Promise.all([
-      Deposit.aggregate([
-        { $match: { createdAt: { $gte: today }, status: "approved" } },
-        { $group: { _id: null, total: { $sum: "$amount" }, count: { $sum: 1 } } }
-      ]),
-      Deposit.aggregate([
-        { $match: { createdAt: { $gte: weekAgo }, status: "approved" } },
-        { $group: { _id: null, total: { $sum: "$amount" }, count: { $sum: 1 } } }
-      ]),
-      Deposit.aggregate([
-        { $match: { createdAt: { $gte: monthAgo }, status: "approved" } },
-        { $group: { _id: null, total: { $sum: "$amount" }, count: { $sum: 1 } } }
-      ]),
-      Deposit.aggregate([
-        { $match: { status: "approved" } },
-        { $group: { _id: null, total: { $sum: "$amount" }, count: { $sum: 1 } } }
-      ])
-    ]);
+      const { status = "all", processedBy = "all", startDate, endDate } = req.query;
 
-    res.json({
-      today: {
-        amount: todayStats[0]?.total || 0,
-        count: todayStats[0]?.count || 0
-      },
-      week: {
-        amount: weekStats[0]?.total || 0,
-        count: weekStats[0]?.count || 0
-      },
-      month: {
-        amount: monthStats[0]?.total || 0,
-        count: monthStats[0]?.count || 0
-      },
-      all: {
-        amount: allStats[0]?.total || 0,
-        count: allStats[0]?.count || 0
-      }
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server Error" });
+      const filter = {};
+
+if (status !== "all") {
+
+  filter.status = status;
+
+}
+if (processedBy !== "all") {
+
+  const processorRegex = new RegExp(
+    `^${processedBy}$`,
+    "i"
+  );
+
+  filter.$or = [
+    {
+      approvedByName: processorRegex
+    },
+    {
+      rejectedByName: processorRegex
+    }
+  ];
+
+}
+
+if (startDate && endDate) {
+
+  filter.createdAt = {
+
+    $gte: new Date(startDate),
+
+    $lte: new Date(
+      new Date(endDate).setHours(
+        23,
+        59,
+        59,
+        999
+      )
+    )
+
+  };
+
+}
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const week = new Date(today);
+      week.setDate(week.getDate() - 7);
+
+      const month = new Date(today);
+      month.setMonth(month.getMonth() - 1);
+
+      const getStats = async (match) => {
+        const result = await Deposit.aggregate([
+          { $match: match },
+          {
+            $group: {
+              _id: null,
+              amount: { $sum: "$amount" },
+              count: { $sum: 1 }
+            }
+          }
+        ]);
+
+        return {
+          amount: result[0]?.amount || 0,
+          count: result[0]?.count || 0
+        };
+      };
+
+      const todayFilter = { ...filter };
+const weekFilter = { ...filter };
+const monthFilter = { ...filter };
+
+if (!startDate || !endDate) {
+
+  todayFilter.createdAt = {
+    $gte: today
+  };
+
+  weekFilter.createdAt = {
+    $gte: week
+  };
+
+  monthFilter.createdAt = {
+    $gte: month
+  };
+
+}
+
+const [
+  todayStats,
+  weekStats,
+  monthStats,
+  allStats,
+  pendingStats,
+  approvedStats,
+  rejectedStats
+] = await Promise.all([
+
+  getStats({
+    ...todayFilter,
+    status:
+  status === "all"
+    ? "approved"
+    : status
+  }),
+
+  getStats({
+    ...weekFilter,
+    status:
+  status === "all"
+    ? "approved"
+    : status
+  }),
+
+  getStats({
+    ...monthFilter,
+    status:
+  status === "all"
+    ? "approved"
+    : status
+  }),
+
+  getStats({
+    ...filter,
+    status:
+  status === "all"
+    ? "approved"
+    : status
+  }),
+
+ getStats({
+  ...filter,
+  status: "pending"
+}),
+
+  getStats({
+    ...filter,
+    status:
+  status === "all"
+    ? "approved"
+    : status
+  }),
+
+ getStats({
+  ...filter,
+  status:
+    status === "all"
+      ? "rejected"
+      : status
+})
+
+]);
+
+      let custom = null;
+
+      if (startDate && endDate) {
+
+       custom = await getStats({
+  ...filter,
+  createdAt: {
+    $gte: new Date(startDate),
+    $lte: new Date(
+      new Date(endDate).setHours(
+        23,
+        59,
+        59,
+        999
+      )
+    )
   }
 });
+      }
+
+      res.json({
+
+        today: todayStats,
+
+        week: weekStats,
+
+        month: monthStats,
+
+        all: allStats,
+
+        pending: pendingStats,
+
+        approved: approvedStats,
+
+        rejected: rejectedStats,
+
+        custom
+
+      });
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        message: error.message
+      });
+
+    }
+  }
+);
+
+router.get(
+  "/:id",
+  auth,
+  roles("admin", "agent"),
+  async (req, res) => {
+
+    try {
+
+      const deposit = await Deposit.findById(req.params.id);
+
+      if (!deposit) {
+        return res.status(404).json({
+          message: "Deposit not found"
+        });
+      }
+
+      res.json(deposit);
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        message: "Server Error"
+      });
+
+    }
+
+  }
+);
 
 
 router.delete(
