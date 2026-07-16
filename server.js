@@ -130,10 +130,10 @@ mongoose
       "✅ MongoDB Connected"
     );
 
-    // TEMPORARY
-// global.bot = require("./bot/telegramBot");
+   
+ global.bot = require("./bot/telegramBot");
 
-console.log("🤖 Telegram bot disabled for API testing");
+console.log("🤖 Telegram bot enable ");
 
       const PORT = process.env.PORT || 5000;
 

@@ -48,6 +48,11 @@ const userSchema = new mongoose.Schema(
       ],
       default: "player"
     },
+    language: {
+  type: String,
+  enum: ["en", "am", "om"],
+  default: "en"
+},
 
     balance: {
       type: Number,

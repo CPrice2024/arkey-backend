@@ -74,6 +74,18 @@ function getRandomNumbers(count = 5) {
   return shuffled.slice(0, count);
 }
 
+const languageKeyboard = Markup.inlineKeyboard([
+  [
+    Markup.button.callback("🇬🇧 English", "lang_en"),
+  ],
+  [
+    Markup.button.callback("🇪🇹 አማርኛ", "lang_am"),
+  ],
+  [
+    Markup.button.callback("🌍 Afaan Oromoo", "lang_om"),
+  ],
+]);
+
 
 bot.start(async (ctx) => {
 
@@ -87,20 +99,12 @@ bot.start(async (ctx) => {
 
   if (!existingUser) {
 
-    await ctx.reply(
-      `🎰 Welcome to Arkey Bet
+  return ctx.reply(
+    "🌍 Please select your language",
+    languageKeyboard
+  );
 
-🌐 Website:
-https://arkey.bet
-
-To continue please register.`,
-      Markup.keyboard([
-        ["✅ Register"]
-      ]).resize()
-    );
-
-    return;
-  }
+}
 
   await ctx.reply(
     `🎰 Welcome Back ${existingUser.firstName}
@@ -116,6 +120,53 @@ Markup.keyboard([
   ["◍ Support"]
 ]).resize()
   );
+});
+
+bot.action("lang_en", async (ctx) => {
+
+  ctx.session.language = "en";
+
+  await ctx.answerCbQuery();
+
+  await ctx.reply(
+    "🇬🇧 English selected.\n\nPlease register to continue.",
+    Markup.keyboard([
+      ["✅ Register"]
+    ]).resize()
+  );
+
+});
+
+
+bot.action("lang_am", async (ctx) => {
+
+  ctx.session.language = "am";
+
+  await ctx.answerCbQuery();
+
+  await ctx.reply(
+    "🇪🇹 ቋንቋ ተመርጧል።\n\nለመቀጠል ይመዝገቡ።",
+    Markup.keyboard([
+      ["✅ Register"]
+    ]).resize()
+  );
+
+});
+
+
+bot.action("lang_om", async (ctx) => {
+
+  ctx.session.language = "om";
+
+  await ctx.answerCbQuery();
+
+  await ctx.reply(
+    "🌍 Afaan filatame.\n\nGalmaa'uuf itti fufi.",
+    Markup.keyboard([
+      ["✅ Register"]
+    ]).resize()
+  );
+
 });
 
 
