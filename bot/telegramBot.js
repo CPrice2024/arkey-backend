@@ -89,37 +89,50 @@ const languageKeyboard = Markup.inlineKeyboard([
 
 bot.start(async (ctx) => {
 
-  const telegramId =
-    String(ctx.from.id);
+  try {
 
-  const existingUser =
-    await User.findOne({
-      telegramId
-    });
+    console.log("🔥 /start received");
+    console.log("Telegram ID:", ctx.from.id);
 
-  if (!existingUser) {
+    const telegramId = String(ctx.from.id);
 
-  return ctx.reply(
-    "🌍 Please select your language",
-    languageKeyboard
-  );
+    const existingUser =
+      await User.findOne({ telegramId });
 
-}
+    console.log("User:", existingUser);
 
-  await ctx.reply(
-    `🎰 Welcome Back ${existingUser.firstName}
+    if (!existingUser) {
+
+      return ctx.reply(
+        "🌍 Please select your language",
+        languageKeyboard
+      );
+
+    }
+
+    return ctx.reply(
+      `🎰 Welcome Back ${existingUser.firstName}
 
 🌐 https://arkey.bet
 
 ◈ Balance:
 ${existingUser.balance} Birr`,
-Markup.keyboard([
-  ["◈ Balance", "◉ Deposit"],
-  ["⇧ Withdraw", "▣ Play Game"],
-  ["◌ Live Matches", "⌘ My Bets"],
-  ["◍ Support"]
-]).resize()
-  );
+      Markup.keyboard([
+        ["◈ Balance", "◉ Deposit"],
+        ["⇧ Withdraw", "▣ Play Game"],
+        ["◌ Live Matches", "⌘ My Bets"],
+        ["◍ Support"]
+      ]).resize()
+    );
+
+  } catch (err) {
+
+    console.log("START ERROR");
+    console.log(err);
+
+    return ctx.reply("❌ Start failed");
+  }
+
 });
 
 bot.action("lang_en", async (ctx) => {
@@ -685,7 +698,8 @@ Buttons:
 `);
 });
 
-
+console.log("START_BOT =", process.env.START_BOT);
+console.log("BOT_TOKEN exists =", !!process.env.BOT_TOKEN);
 const enableBot =
   process.env.START_BOT === "true" &&
   !!process.env.BOT_TOKEN;
