@@ -635,21 +635,19 @@ Buttons:
 });
 
 
+const enableBot =
+  process.env.START_BOT === "true" &&
+  !!process.env.BOT_TOKEN;
 
-if (process.env.START_BOT === "true") {
-
+if (enableBot) {
   bot.launch();
 
   console.log("🤖 Arkey Bet Telegram Bot Running");
 
   process.once("SIGINT", () => bot.stop("SIGINT"));
-
   process.once("SIGTERM", () => bot.stop("SIGTERM"));
-
 } else {
-
-  console.log("⚠️ Telegram Bot Disabled (Development Mode)");
-
+  console.log("⚠️ Telegram Bot Disabled");
 }
 
 module.exports = bot;

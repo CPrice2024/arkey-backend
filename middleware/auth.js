@@ -27,6 +27,7 @@ module.exports =
     );
 
     req.user = decoded;
+    console.log("Decoded JWT:", decoded);
 
     next();
 

@@ -53,6 +53,17 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
+    gameToken: {
+  type: String,
+  unique: true,
+  sparse: true,
+  index: true,
+},
+
+gameTokenExpires: {
+  type: Date,
+  default: null,
+},
 
     totalDeposited: {
       type: Number,

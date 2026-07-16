@@ -1,5 +1,7 @@
 const express = require("express");
+
 const verifySignature = require("../middleware/verifyProviderSignature");
+
 const { callback } = require("../controllers/inoutController");
 
 const router = express.Router();
@@ -19,11 +21,11 @@ router.post(
 );
 
 /*
- * Main callback from InOut provider
+ * Main callback from InOut
  */
 router.post(
-  "/gamesprovider",
-  // verifySignature, // Enable after testing
+  "/provider",
+  // verifySignature,
   callback
 );
 

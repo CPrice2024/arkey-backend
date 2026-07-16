@@ -8,7 +8,16 @@ const userRoutes =
   const gameAuthRoutes =
 require("./routes/gameAuthRoutes");
 
+const gameLaunchRoutes = require("./routes/gameLaunchRoutes");
+
 const inoutRoutes = require("./routes/inoutRoutes");
+
+const gameCatalogRoutes = require("./routes/gameCatalogRoutes");
+
+const gameImportRoutes =
+  require("./routes/gameImportRoutes");
+
+const catalogRoutes = require("./routes/catalogRoutes");
 
 const authRoutes =
   require("./routes/authRoutes");
@@ -89,8 +98,17 @@ app.use(
   withdrawalRoutes
 );
 
+app.use(
+"/api/import-games",
+gameImportRoutes
+);
+
 
 app.use("/api/inout", inoutRoutes);
+
+// app.use("/api/catalog", gameCatalogRoutes);
+
+app.use("/api/games", gameLaunchRoutes);
 
 app.use(
   "/api/game", 
@@ -101,6 +119,8 @@ app.use(
 "/api/game",
 gameAuthRoutes
 );
+
+app.use("/api/catalog", catalogRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI)

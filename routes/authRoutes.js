@@ -49,6 +49,7 @@ router.post(
           expiresIn: "7d"
         }
       );
+      console.log("LOGIN SECRET =", process.env.JWT_SECRET);
 
       res.json({
         success: true,
@@ -98,6 +99,7 @@ router.post(
           expiresIn: "7d"
         }
       );
+      console.log("LOGIN SECRET =", process.env.JWT_SECRET);
 
     res.json({
       token,
@@ -142,6 +144,7 @@ router.post(
             expiresIn: "7d"
           }
         );
+        console.log("LOGIN SECRET =", process.env.JWT_SECRET);
 
       res.json({
         success: true,

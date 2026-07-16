@@ -1,67 +1,92 @@
 const mongoose = require("mongoose");
 
-const gameTransactionSchema = new mongoose.Schema(
-{
-    player:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true
+const gameTransactionSchema = new mongoose.Schema({
+
+    player: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
     },
 
-    transactionId:{
-        type:String,
-        required:true,
-        unique:true
+    telegramId: {
+        type: String,
+        index: true
     },
 
-    debitId:{
-        type:String,
-        default:null
+    transactionId: {
+        type: String,
+        required: true,
+        unique: true
     },
 
-    gameId:String,
+    debitId: {
+        type: String,
+        default: null
+    },
 
-    gameMode:String,
+    roundId: {
+        type: String,
+        default: null
+    },
 
-    action:{
-        type:String,
-        enum:[
+    providerGameId: {
+        type: String,
+        default: null
+    },
+
+    gameId: String,
+
+    gameMode: String,
+
+    action: {
+        type: String,
+        enum: [
             "bet",
-            "withdraw",
+            "credit",
+            "refund",
             "rollback"
         ],
-        required:true
+        required: true
     },
 
-    amount:{
-        type:Number,
-        default:0
+    amount: {
+        type: Number,
+        default: 0
     },
 
-    result:{
-        type:Number,
-        default:0
+    result: {
+        type: Number,
+        default: 0
     },
 
-    coefficient:Number,
+    coefficient: Number,
 
-    currency:{
-        type:String,
-        default:"ETB"
+    currency: {
+        type: String,
+        default: "USD"
     },
 
-    balanceBefore:Number,
+    balanceBefore: Number,
 
-    balanceAfter:Number,
+    balanceAfter: Number,
 
-    isFinished:{
-        type:Boolean,
-        default:false
+    status: {
+        type: String,
+        enum: [
+            "success",
+            "rollback",
+            "refund"
+        ],
+        default: "success"
+    },
+
+    isFinished: {
+        type: Boolean,
+        default: false
     }
 
-},
-{
-    timestamps:true
+}, {
+    timestamps: true
 });
 
 module.exports = mongoose.model(
