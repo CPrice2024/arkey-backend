@@ -6,7 +6,7 @@ exports.getCatalog = async (req, res) => {
 
         const {
             page = 1,
-            limit = 20,
+            limit = 1000,
             category,
             provider,
             search,
