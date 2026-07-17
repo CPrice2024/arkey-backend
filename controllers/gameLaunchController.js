@@ -47,14 +47,14 @@ exports.launchGame = async (req, res) => {
    
     // Build InOut Launch URL
     const launchUrl =
-      `${process.env.INOUT_FRAME_URL}` +
-      `?gameMode=${encodeURIComponent(game.providerGameId)}` +
-      `&operatorId=${process.env.INOUT_OPERATOR_ID}` +
-      `&authToken=${token}` +
-      `&currency=${process.env.DEFAULT_CURRENCY || "ETB"}` +
-      `&lang=${process.env.DEFAULT_LANGUAGE || "en"}` +
-      `&country=${process.env.DEFAULT_COUNTRY || "ET"}` +
-      `&adaptive=true`;
+  `${process.env.INOUT_FRAME_URL}` +
+  `?gameMode=${encodeURIComponent(game.providerGameId)}` +
+  `&operatorId=${process.env.INOUT_OPERATOR_ID}` +
+  `&authToken=${token}` +
+  `&currency=${process.env.DEFAULT_CURRENCY || "ETB"}` +
+  `&lang=${process.env.DEFAULT_LANGUAGE || "en"}` +
+  `&countryCode=${process.env.DEFAULT_COUNTRYCODE || "ET"}` +
+  `&adaptive=true`;
 
     console.log("===== Launch URL =====");
     console.log(launchUrl);
