@@ -128,7 +128,7 @@ router.post(
       if (!user) {
         return res.status(404).json({
           message:
-            "Player not found"
+            "please register first to play"
         });
       }
 
