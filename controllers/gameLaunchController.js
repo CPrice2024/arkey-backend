@@ -53,7 +53,7 @@ exports.launchGame = async (req, res) => {
       `&authToken=${token}` +
       `&currency=${process.env.DEFAULT_CURRENCY || "ETB"}` +
       `&lang=${process.env.DEFAULT_LANGUAGE || "en"}` +
-      `&country=${process.env.DEFAULT_COUNTRY || "ET"}`
+      `&country=${process.env.DEFAULT_COUNTRY || "ET"}` +
       `&adaptive=true`;
 
     console.log("===== Launch URL =====");
