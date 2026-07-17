@@ -123,7 +123,7 @@
   {
     "provider": "InOut",
     "providerGameId": "chicken-shoot",
-    "gameName": "?hicken Shoot",
+    "gameName": "chicken Shoot",
     "category": "Instant",
     "image": "",
     "demo": false,
@@ -574,7 +574,7 @@
   {
     "provider": "InOut",
     "providerGameId": "coinflip",
-    "gameName": "?oinflip",
+    "gameName": "oinflip",
     "category": "Instant",
     "image": "",
     "demo": false,

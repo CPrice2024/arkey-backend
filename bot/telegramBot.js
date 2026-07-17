@@ -113,7 +113,9 @@ bot.start(async (ctx) => {
     return ctx.reply(
       `🎰 Welcome Back ${existingUser.firstName}
 
-🌐 https://arkey.bet
+🎮 Welcome to Arkey Games!🎮 Welcome to Arkey Games!
+
+Play exciting casino games directly inside Telegram.
 
 ◈ Balance:
 ${existingUser.balance} Birr`,
@@ -242,7 +244,10 @@ bot.on("contact", async (ctx) => {
 👤 Name: ${newUser.firstName}
 📱 Phone: ${phone}
 
-🌐 https://arkey.bet`,
+🎮 You're all set!
+
+Tap "▣ Play Game" to start playing instantly.`,
+
       Markup.keyboard([
         ["◈ Balance", "◉ Deposit"],
         ["⇧ Withdraw", "▣ Play Game"],
@@ -362,7 +367,9 @@ ${amount} Birr
 💳 Remaining Balance:
 ${user.balance} Birr
 
-⏳ Waiting For Admin Approval
+⏳ Your withdrawal request has been received.
+
+We'll notify you once it has been processed.
 `);
 }
 
@@ -433,7 +440,11 @@ TRX123456
 💰 Amount: ${deposit.amount} Birr
 🧾 Transaction ID: ${transactionId}
 
-⏳ Waiting for admin approval.
+✅ Deposit request received.
+
+⏳ Your payment is being verified.
+
+You'll receive a notification as soon as it's approved.
 `);
 
       return;
@@ -469,7 +480,7 @@ async (ctx) => {
     }
 
     ctx.reply(
-      `💰 Your Balance:
+      `💰 Current Balance:
 ${user.balance} Birr`
     );
 
@@ -605,16 +616,31 @@ bot.action("withdraw_cbe", async (ctx) => {
 
 bot.hears("▣ Play Game", async (ctx) => {
 
-  await ctx.reply(
-    "🎰 Open Virtual Casino",
-    Markup.inlineKeyboard([
-      [
-        Markup.button.webApp(
-          "🚀 Play Now",
-          "https://arkey-frontend.vercel.app/game"
-        )
-      ]
-    ])
+  await ctx.replyWithPhoto(
+    {
+      source: "./assets/arkey-banner.png",
+    },
+    {
+      caption:
+`🎮 *Welcome to Arkey Games*
+
+🔥 100+ Premium Casino Games
+💸 Fast ETB Withdrawals
+⚡ Play instantly inside Telegram
+
+👇 Tap the button below to start playing.`,
+
+      parse_mode: "Markdown",
+
+      reply_markup: Markup.inlineKeyboard([
+        [
+          Markup.button.webApp(
+            "🚀 Play Now",
+            "https://arkey-frontend.vercel.app/game"
+          )
+        ]
+      ]).reply_markup
+    }
   );
 
 });
@@ -646,9 +672,7 @@ bot.hears("◌ Live Matches",
 (ctx) => {
 
   ctx.reply(`
-⚽ Live Matches Coming Soon
-
-🌐 https://arkey.bet
+⚽ Live Matches
 `);
 });
 
@@ -657,9 +681,8 @@ bot.hears("⌘ My Bets",
 (ctx) => {
 
   ctx.reply(`
-🎫 Bet History Coming Soon
+🎫 Bet History
 
-🌐 https://arkey.bet
 `);
 });
 
@@ -668,12 +691,14 @@ bot.hears("◍ Support",
 
   ctx.reply(`
 🆘 Support
+Need help?
 
-🌐 Website:
-https://arkey.bet
+Need help?
 
-📩 Contact Admin:
+📩 Contact Support:
 https://t.me/arkeybet
+
+🎮 Enjoy playing with Arkey Games!
 `);
 });
 
