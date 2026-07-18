@@ -155,6 +155,8 @@ bot.action("lang_en", async (ctx) => {
 
 const lang = t("en");
 
+console.log("LANG =", lang);
+
 await ctx.reply(
     "🇬🇧 English selected.\n\nPlease register to continue.",
     Markup.keyboard([
@@ -179,7 +181,7 @@ bot.action("lang_am", async (ctx) => {
 const lang = t("am");
 
 await ctx.reply(
-    "am Amharic selected.\n\nPlease register to continue.",
+    "አማርኛ ተመርጧል\n\nለመቀጠል እባክዎ ይመዝገቡ",
     Markup.keyboard([
         [lang.register]
     ]).resize()
