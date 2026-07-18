@@ -3,6 +3,8 @@ require("dotenv").config();
 const { Telegraf, Markup, session } =
   require("telegraf");
 
+  const t = require("../utils/i18n");
+
 const User =
   require("../models/User");
 
@@ -98,7 +100,6 @@ bot.start(async (ctx) => {
 
     const existingUser =
       await User.findOne({ telegramId });
-      const t = require("../utils/i18n");
 
 const lang = t(existingUser?.language || "en");
 
@@ -264,7 +265,6 @@ bot.on("contact", async (ctx) => {
 });
 
     await newUser.save();
-    const t = require("../utils/i18n");
 
     const lang = t(newUser.language || "en");
 
