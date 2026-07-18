@@ -140,6 +140,8 @@ ${existingUser.balance} Birr`,
 });
 
 bot.action("lang_en", async (ctx) => {
+      console.log("🔥 English callback received");
+
 
     ctx.session.language = "en";
 
