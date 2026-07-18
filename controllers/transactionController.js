@@ -3,55 +3,34 @@ const Withdrawal = require("../models/Withdrawal");
 
 exports.getPlayerTransactions = async (req, res) => {
   try {
-    // Get deposits
     const deposits = await Deposit.find({
       player: req.user._id,
-    })
-      .select(
-        "amount status method createdAt depositNumber transactionId"
-      )
-      .lean();
+    });
 
-    // Get withdrawals
     const withdrawals = await Withdrawal.find({
       player: req.user._id,
-    })
-      .select(
-        "amount status method createdAt withdrawalNumber accountNumber"
-      )
-      .lean();
+    });
 
-    const depositHistory = deposits.map((item) => ({
-      _id: item._id,
+    const depositHistory = deposits.map((d) => ({
       type: "Deposit",
-      amount: item.amount,
-      status: item.status,
-      method: item.method,
-      reference:
-        item.transactionId ||
-        item.depositNumber,
-      createdAt: item.createdAt,
+      amount: d.amount,
+      status: d.status,
+      method: d.method,
+      reference: d.transactionId || d.depositNumber,
+      createdAt: d.createdAt,
     }));
 
-    const withdrawalHistory =
-      withdrawals.map((item) => ({
-        _id: item._id,
-        type: "Withdrawal",
-        amount: item.amount,
-        status: item.status,
-        method: item.method,
-        reference:
-          item.withdrawalNumber,
-        createdAt: item.createdAt,
-      }));
+    const withdrawalHistory = withdrawals.map((w) => ({
+      type: "Withdrawal",
+      amount: w.amount,
+      status: w.status,
+      method: w.method,
+      reference: w.withdrawalNumber,
+      createdAt: w.createdAt,
+    }));
 
-    const transactions = [
-      ...depositHistory,
-      ...withdrawalHistory,
-    ].sort(
-      (a, b) =>
-        new Date(b.createdAt) -
-        new Date(a.createdAt)
+    const transactions = [...depositHistory, ...withdrawalHistory].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
 
     res.json({
@@ -60,7 +39,7 @@ exports.getPlayerTransactions = async (req, res) => {
       transactions,
     });
   } catch (err) {
-    console.log(err);
+    console.error(err);
 
     res.status(500).json({
       success: false,

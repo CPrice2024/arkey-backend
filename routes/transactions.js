@@ -1,23 +1,11 @@
 const express = require("express");
+const auth = require("../middleware/auth");
+const {
+  getPlayerTransactions,
+} = require("../controllers/transactionController");
 
 const router = express.Router();
 
-console.log("✅ Transactions route loaded");
-
-router.get("/", (req, res) => {
-  res.json({
-    success: true,
-    route: "/api/transactions"
-  });
-});
-
-router.get("/player", (req, res) => {
-  console.log("🔥 PLAYER ROUTE HIT");
-
-  res.json({
-    success: true,
-    route: "/api/transactions/player"
-  });
-});
+router.get("/player", auth, getPlayerTransactions);
 
 module.exports = router;
