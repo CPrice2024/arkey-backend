@@ -9,14 +9,27 @@ exports.getPlayerTransactions = async (req, res) => {
 
     const user = await User.findById(req.user._id);
 
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
     console.log("Database user:", user);
 
     const deposits = await Deposit.find({
-      player: req.user._id,
+      $or: [
+        { player: user._id },
+        { telegramId: user.telegramId },
+      ],
     });
 
     const withdrawals = await Withdrawal.find({
-      player: req.user._id,
+      $or: [
+        { player: user._id },
+        { telegramId: user.telegramId },
+      ],
     });
 
     console.log("Deposits:", deposits.length);
