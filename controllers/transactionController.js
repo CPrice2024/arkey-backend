@@ -36,22 +36,24 @@ exports.getPlayerTransactions = async (req, res) => {
     console.log("Withdrawals:", withdrawals.length);
 
     const depositHistory = deposits.map((d) => ({
-      type: "Deposit",
-      amount: d.amount,
-      status: d.status,
-      method: d.method,
-      reference: d.transactionId || d.depositNumber,
-      createdAt: d.createdAt,
-    }));
+  _id: d._id,
+  type: "Deposit",
+  amount: d.amount,
+  status: d.status,
+  method: d.method,
+  reference: d.transactionId || d.depositNumber,
+  createdAt: d.createdAt,
+}));
 
-    const withdrawalHistory = withdrawals.map((w) => ({
-      type: "Withdrawal",
-      amount: w.amount,
-      status: w.status,
-      method: w.method,
-      reference: w.withdrawalNumber,
-      createdAt: w.createdAt,
-    }));
+const withdrawalHistory = withdrawals.map((w) => ({
+  _id: w._id,
+  type: "Withdrawal",
+  amount: w.amount,
+  status: w.status,
+  method: w.method,
+  reference: w.withdrawalNumber,
+  createdAt: w.createdAt,
+}));
 
     const transactions = [...depositHistory, ...withdrawalHistory].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
