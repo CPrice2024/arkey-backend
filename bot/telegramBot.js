@@ -98,6 +98,9 @@ bot.start(async (ctx) => {
 
     const existingUser =
       await User.findOne({ telegramId });
+      const t = require("../utils/i18n");
+
+const lang = t(existingUser?.language || "en");
 
     console.log("User:", existingUser);
 
@@ -111,20 +114,18 @@ bot.start(async (ctx) => {
     }
 
     return ctx.reply(
-      `🎰 Welcome Back ${existingUser.firstName}
+`${lang.welcome} ${existingUser.firstName}
 
-🎮 Welcome to Arkey Games!🎮 Welcome to Arkey Games!
+🎮 ${lang.welcome}
 
-Play exciting casino games directly inside Telegram.
-
-◈ Balance:
+${lang.balance}
 ${existingUser.balance} Birr`,
+
       Markup.keyboard([
-        ["◈ Balance", "◉ Deposit"],
-        ["⇧ Withdraw", "▣ Play Game"],
-        ["◌ Change Language", "🌍 Language"],
-        ["◍ Support"]
-      ]).resize()
+    [lang.balance, lang.deposit],
+    [lang.withdraw, lang.play],
+    [lang.language, lang.support]
+]).resize()
     );
 
   } catch (err) {
@@ -139,48 +140,71 @@ ${existingUser.balance} Birr`,
 
 bot.action("lang_en", async (ctx) => {
 
-  ctx.session.language = "en";
+    ctx.session.language = "en";
 
-  await ctx.answerCbQuery();
+    const telegramId = String(ctx.from.id);
 
-  await ctx.reply(
+    await User.findOneAndUpdate(
+        { telegramId },
+        { language: "en" }
+    );
+    await ctx.answerCbQuery();
+
+const lang = t("en");
+
+await ctx.reply(
     "🇬🇧 English selected.\n\nPlease register to continue.",
     Markup.keyboard([
-      ["✅ Register"]
+        [lang.register]
     ]).resize()
-  );
+);
 
 });
 
-
 bot.action("lang_am", async (ctx) => {
 
-  ctx.session.language = "am";
+    ctx.session.language = "am";
 
-  await ctx.answerCbQuery();
+    const telegramId = String(ctx.from.id);
 
-  await ctx.reply(
-    "🇪🇹 ቋንቋ ተመርጧል።\n\nለመቀጠል ይመዝገቡ።",
+    await User.findOneAndUpdate(
+        { telegramId },
+        { language: "am" }
+    );
+    await ctx.answerCbQuery();
+
+const lang = t("am");
+
+await ctx.reply(
+    "am Amharic selected.\n\nPlease register to continue.",
     Markup.keyboard([
-      ["✅ Register"]
+        [lang.register]
     ]).resize()
-  );
+);
 
 });
 
 
 bot.action("lang_om", async (ctx) => {
 
-  ctx.session.language = "om";
+    ctx.session.language = "om";
 
-  await ctx.answerCbQuery();
+    const telegramId = String(ctx.from.id);
 
-  await ctx.reply(
-    "🌍 Afaan filatame.\n\nGalmaa'uuf itti fufi.",
+    await User.findOneAndUpdate(
+        { telegramId },
+        { language: "om" }
+    );
+    await ctx.answerCbQuery();
+
+const lang = t("om");
+
+await ctx.reply(
+    "om Afan Ormom selected.\n\nItti fufuuf galmaa'i",
     Markup.keyboard([
-      ["✅ Register"]
+        [lang.register]
     ]).resize()
-  );
+);
 
 });
 
@@ -225,18 +249,24 @@ bot.on("contact", async (ctx) => {
     }
 
     const newUser = new User({
-      telegramId,
-      username:
-        ctx.from.username ||
-        `user_${telegramId}`,
-      firstName:
-        ctx.from.first_name || "",
-      lastName:
-        ctx.from.last_name || "",
-      phone
-    });
+  telegramId,
+  username:
+    ctx.from.username ||
+    `user_${telegramId}`,
+  firstName:
+    ctx.from.first_name || "",
+  lastName:
+    ctx.from.last_name || "",
+  phone,
+
+  language:
+    ctx.session.language || "en"
+});
 
     await newUser.save();
+    const t = require("../utils/i18n");
+
+    const lang = t(newUser.language || "en");
 
     await ctx.reply(
       `✅ Registration Successful
@@ -248,12 +278,12 @@ bot.on("contact", async (ctx) => {
 
 Tap "▣ Play Game" to start playing instantly.`,
 
+
       Markup.keyboard([
-        ["◈ Balance", "◉ Deposit"],
-        ["⇧ Withdraw", "▣ Play Game"],
-        ["◌ Change language", "🌍 Language"],
-        ["◍ Support"]
-      ]).resize()
+    [lang.balance, lang.deposit],
+    [lang.withdraw, lang.play],
+    [lang.language, lang.support]
+])
     );
 
   } catch (error) {
