@@ -1,8 +1,16 @@
 const Deposit = require("../models/Deposit");
 const Withdrawal = require("../models/Withdrawal");
+const User = require("../models/User");
 
 exports.getPlayerTransactions = async (req, res) => {
   try {
+    console.log("🔥 Transaction controller reached");
+    console.log("Decoded JWT:", req.user);
+
+    const user = await User.findById(req.user._id);
+
+    console.log("Database user:", user);
+
     const deposits = await Deposit.find({
       player: req.user._id,
     });
@@ -10,6 +18,9 @@ exports.getPlayerTransactions = async (req, res) => {
     const withdrawals = await Withdrawal.find({
       player: req.user._id,
     });
+
+    console.log("Deposits:", deposits.length);
+    console.log("Withdrawals:", withdrawals.length);
 
     const depositHistory = deposits.map((d) => ({
       type: "Deposit",
