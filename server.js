@@ -1,5 +1,6 @@
 console.log("🔥 BACKEND SERVER.JS LOADED");
 require("dotenv").config();
+console.log("SERVER FILE:", __filename);
 
 const userRoutes =
   require("./routes/userRoutes");
@@ -21,6 +22,9 @@ const catalogRoutes = require("./routes/catalogRoutes");
 
 const authRoutes =
   require("./routes/authRoutes");
+
+const transactionRoutes =
+  require("./routes/transactions");
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -71,6 +75,14 @@ app.use(cors({
 app.use(express.json());
 
 
+app.get("/api/debug", (req, res) => {
+  res.json({
+    ok: true,
+    message: "Debug route works"
+  });
+});
+
+
 app.get("/test", (req, res) => {
   res.json({
     success: true,
@@ -99,6 +111,18 @@ app.use(
 );
 
 app.use(
+  "/api/transactions",
+  transactionRoutes
+);
+
+app.get("/api/transactions-test", (req, res) => {
+  res.json({
+    ok: true,
+    message: "Transactions test works"
+  });
+});
+
+app.use(
 "/api/import-games",
 gameImportRoutes
 );
@@ -121,6 +145,12 @@ gameAuthRoutes
 );
 
 app.use("/api/catalog", catalogRoutes);
+
+app.get("/version", (req, res) => {
+  res.json({
+    version: "2026-07-17-001"
+  });
+});
 
 mongoose
   .connect(process.env.MONGO_URI)

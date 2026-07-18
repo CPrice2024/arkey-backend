@@ -122,7 +122,7 @@ ${existingUser.balance} Birr`,
       Markup.keyboard([
         ["◈ Balance", "◉ Deposit"],
         ["⇧ Withdraw", "▣ Play Game"],
-        ["◌ Live Matches", "⌘ My Bets"],
+        ["◌ Change Language", "🌍 Language"],
         ["◍ Support"]
       ]).resize()
     );
@@ -251,7 +251,7 @@ Tap "▣ Play Game" to start playing instantly.`,
       Markup.keyboard([
         ["◈ Balance", "◉ Deposit"],
         ["⇧ Withdraw", "▣ Play Game"],
-        ["◌ Live Matches", "⌘ My Bets"],
+        ["◌ Change language", "🌍 Language"],
         ["◍ Support"]
       ]).resize()
     );
@@ -677,13 +677,11 @@ bot.hears("◌ Live Matches",
 });
 
 
-bot.hears("⌘ My Bets",
-(ctx) => {
-
-  ctx.reply(`
-🎫 Bet History
-
-`);
+bot.hears("🌍 Language", async (ctx) => {
+  await ctx.reply(
+    "🌍 Please select your language",
+    languageKeyboard
+  );
 });
 
 bot.hears("◍ Support",

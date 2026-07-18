@@ -1,19 +1,67 @@
 module.exports = {
-  selectLanguage: "🌍 Please select your language",
+  en: {
+    selectLanguage: "🌍 Please select your language",
 
-  welcome: "🎰 Welcome to Arkey Bet",
+    welcome: "🎰 Welcome to Arkey Games",
 
-  register: "✅ Register",
+    register: "✅ Register",
 
-  sharePhone: "📱 Please share your phone number",
+    sharePhone: "📱 Please share your phone number",
 
-  balance: "Balance",
+    balance: "💰 Balance",
 
-  deposit: "Deposit",
+    deposit: "💳 Deposit",
 
-  withdraw: "Withdraw",
+    withdraw: "💸 Withdraw",
 
-  play: "Play Game",
+    play: "🎮 Play Game",
 
-  support: "Support"
+    support: "🛟 Support",
+
+    language: "🌍 Language",
+  },
+
+  am: {
+    selectLanguage: "🌍 እባክዎ ቋንቋዎን ይምረጡ",
+
+    welcome: "🎰 ወደ Arkey Games እንኳን በደህና መጡ",
+
+    register: "✅ ይመዝገቡ",
+
+    sharePhone: "📱 እባክዎ የስልክ ቁጥርዎን ያጋሩ",
+
+    balance: "💰 ቀሪ ሂሳብ",
+
+    deposit: "💳 ገንዘብ ያስገቡ",
+
+    withdraw: "💸 ገንዘብ ያውጡ",
+
+    play: "🎮 ጨዋታ ጀምር",
+
+    support: "🛟 ድጋፍ",
+
+     language: "🌍 ቋንቋ",
+  },
+
+  om: {
+    selectLanguage: "🌍 Mee afaan kee filadhu",
+
+    welcome: "🎰 Baga gara Arkey Games dhuftan",
+
+    register: "✅ Galmaa'i",
+
+    sharePhone: "📱 Mee lakkoofsa bilbilaa kee qoodi",
+
+    balance: "💰 Herrega",
+
+    deposit: "💳 Maallaqa Galchi",
+
+    withdraw: "💸 Maallaqa Baasi",
+
+    play: "🎮 Taphi Jalqabi",
+
+    support: "🛟 Deeggarsa",
+
+    language: "🌍 Afaan",
+  },
 };
